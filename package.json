@@ -1,0 +1,43 @@
+{
+  "name": "headson",
+  "version": "1.0.0",
+  "description": "A modular CLI tool for managing automations with plugin-based architecture in Node.js",
+  "keywords": [
+    "CLI",
+    "HeadsOn"
+  ],
+  "license": "ISC",
+  "author": "Lucas Trino <lucastrino@outlook.com>",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev": "ts-node-dev -r tsconfig-paths/register src/index.ts",
+    "build": "tsc",
+    "prepare": "husky"
+  },
+  "type": "module",
+  "main": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "bin": {
+    "headson": "./bin/index"
+  },
+  "preferGlobal": true,
+  "os": [
+    "win32"
+  ],
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@types/node": "^24.0.4",
+    "husky": "^9.1.7",
+    "ts-node-dev": "^2.0.0",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
