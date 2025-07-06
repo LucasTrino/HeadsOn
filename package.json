@@ -12,7 +12,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "dev": "ts-node-dev -r tsconfig-paths/register src/index.ts",
+    "dev": "nodemon src/index.ts",
     "build": "tsc",
     "prepare": "husky"
   },
@@ -31,13 +31,16 @@
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
-    "@types/node": "^24.0.4",
+    "@types/node": "^24.0.10",
     "husky": "^9.1.7",
-    "ts-node-dev": "^2.0.0",
-    "tsconfig-paths": "^4.2.0",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "chalk": "^5.4.1"
   }
 }
