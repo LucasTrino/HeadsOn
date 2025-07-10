@@ -3,10 +3,15 @@ import IAppCoreContext from "../appCoreContext.interface.js"
 export default interface IPlugin {
   name: string;
   version: string;
+  handler: string,
   description?: string,
   initialize?: (context: IAppCoreContext) => Promise<void>;
   shutdown?: () => Promise<void>;
   commands: {
-    [key: string]: (...options: any[]) => Promise<any> | Function;
-  };
+    [key: string]: {
+      options: string[],
+      descriptions: string,
+      action: (...options: any[]) => Promise<any> | Function;
+    }
+  }
 }

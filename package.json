@@ -12,7 +12,8 @@
     "doc": "docs"
   },
   "scripts": {
-    "dev": "nodemon src/bin/index.ts",
+    "dev": "nodemon src/index.ts",
+    "dev:cli": "nodemon src/bin/index.ts testPlugin:teste --tchau",
     "build": "tsc",
     "prepare": "husky"
   },

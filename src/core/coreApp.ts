@@ -1,6 +1,6 @@
 // Interfaces Imports
 import IPluginManager from "./interfaces/plugins/pluginManager.interface.js";
-import ISingletonInstance from "./interfaces/general/singletonInstance.interface.js";
+import ICoreApp from "./interfaces/general/coreApp.interface.js";
 import IAppCoreContext from './interfaces/appCoreContext.interface.js';
 // General Imports
 import getPluginManager from "./pluginManager.js";
@@ -11,17 +11,17 @@ import testPlugin from "../plugins-system/testPlugin.js";
 // coreApp 
 export default coreApp
 
-let instance: ISingletonInstance;
+let instance: ICoreApp;
+let context: IAppCoreContext;
 
-function coreApp(): ISingletonInstance {
-
+function coreApp(): ICoreApp {
   if (instance) return instance;
 
-  const context: IAppCoreContext = {
+  context = {
     styledLog: styledLog,
   }
 
-  const init = async () => {
+  async function init(): Promise<void> {
     console.log(context.styledLog.blue('HeadsOn is operating...'));
 
     const pluginManager: IPluginManager = getPluginManager();

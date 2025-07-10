@@ -4,26 +4,32 @@ const testPlugin: IPlugin = {
   name: 'Test Plugin',
   version: '1.0.0',
   description: 'Test Plugin',
+  handler: "testPlugin",
   commands: {
-    "teste": async (...options) => {
 
-      //TODO(before-commit): Teste do parser das options de comando (!Apagar antes do commit)
+    // TODO/OPTMIZE - 1.7.0
+    teste: {
+      options: ['--ola', '--tchau', '--laura'],
+      descriptions: 'console a test message.',
+      action: async (options: { [key: string]: boolean }) => {
 
-      if (options.includes('--olá')) {
-        console.log(`Test Plugin execution success with "Olá"!`);
+        // TODO/OPTMIZE - 1.8.0
+        if (options.ola) {
+          console.log(`Test Plugin execution success with "Olá"!`);
+        }
+        if (options.tchau) {
+          console.log(`Test Plugin execution success with "Tchau"!`);
+        }
+        console.log(`Test Plugin execution success!`);
+
       }
-
-      if (options.includes('--tchau')) {
-        console.log(`Test Plugin execution success with "Tchau"!`);
-      }
-      
-      console.log(`Test Plugin execution success!`);
-
     }
   },
+
   initialize: async (context) => {
     console.log(context.styledLog.yellow("Teste Plugin is also on."))
   },
+
 };
 
 export default testPlugin;

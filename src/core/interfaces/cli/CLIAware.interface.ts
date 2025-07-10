@@ -1,7 +1,5 @@
-// create the CLIAware interface
-interface ICLIAware {
-  registerPluginCommands: (program: any) => Promise<void>,
-  init: () => Promise<void>
-}
+import ISingletonInstance from "../singletons/singletonInstance.interface.js"
 
-export default ICLIAware 
+export default interface ICLIAware extends ISingletonInstance {
+  init: () => Promise<void>;
+}

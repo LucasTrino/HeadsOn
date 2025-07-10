@@ -8,33 +8,14 @@ import coreApp from '../coreApp.js';
 
 export default CLIAware;
 
+const pluginManager = getPluginManager();
+
 let instance: ICLIAware;
 
 function CLIAware(): ICLIAware {
   if (instance) return instance;
-  //TODO: Remover any
-  async function registerPluginCommands(program: any): Promise<void> {
-    const pluginManager = getPluginManager();
 
-    const pluginsList = Array.from(pluginManager.commands.entries());
-
-    for (let index = 0; index < pluginsList.length; index++) {
-      const plugin = pluginsList[index][0];
-
-      program.command(`${plugin}`)
-        .description(``)
-        .action(async (options: string[]) => {
-          const commandFn = pluginManager.commands.get(plugin);
-          if (typeof commandFn === 'function') {
-            await commandFn();
-          } else {
-            console.warn(`Command for plugin "${plugin}" is not defined.`);
-          }
-        });
-    }
-  }
-
-  async function init(): Promise<any> {
+  async function createCliInstance(): Promise<void> {
     const program = new Command();
 
     program
@@ -42,16 +23,9 @@ function CLIAware(): ICLIAware {
       .description('CLI para minha aplicação')
       .version('1.0.0');
 
+    // TODO/OPTMIZE - 1.0.0 
     try {
-      const main = coreApp();
-      await main.init()
-    } catch (error: any) {
-      console.error('Application failed to start:', error);
-      process.exit(1);
-    }
-
-    try {
-      await registerPluginCommands(program);
+      await pluginManager.registerPluginCommands(program);
     } catch (error: any) {
       throw new Error(`Failed to register plugins commands.`)
     }
@@ -59,8 +33,18 @@ function CLIAware(): ICLIAware {
     program.parse(process.argv);
   }
 
+  async function init(): Promise<void> {
+    try {
+      const main = coreApp();
+      await main.init()
+      await createCliInstance();
+    } catch (error: any) {
+      console.error('Application failed to start:', error);
+      process.exit(1);
+    }
+  }
+
   instance = {
-    registerPluginCommands: registerPluginCommands,
     init: init
   }
 
