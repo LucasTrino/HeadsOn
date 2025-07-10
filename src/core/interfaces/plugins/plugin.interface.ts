@@ -7,6 +7,6 @@ export default interface IPlugin {
   initialize?: (context: IAppCoreContext) => Promise<void>;
   shutdown?: () => Promise<void>;
   commands: {
-    [key: string]: (...args: any[]) => Promise<any> | Function;
+    [key: string]: (...options: any[]) => Promise<any> | Function;
   };
 }

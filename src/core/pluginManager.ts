@@ -6,13 +6,13 @@ export default pluginManager;
 
 let instance: IPluginManager;
 
-function pluginManager(appContext: IAppCoreContext): IPluginManager {
+function pluginManager(): IPluginManager {
   const plugins = new Map();
   const commands = new Map();
 
   if (instance) return instance;
 
-  const registerPlugin = async (plugin: IPlugin): Promise<void> => {
+  const registerPlugin = async (plugin: IPlugin, appContext: IAppCoreContext): Promise<void> => {
     if (plugins.has(plugin.name)) return;
 
     // Validando interface do plugin
@@ -44,8 +44,9 @@ function pluginManager(appContext: IAppCoreContext): IPluginManager {
   const getPlugin = (pluginName: string): IPlugin => {
     return plugins.get(pluginName);
   }
-
-  const listPlugins = () => {
+  
+  //TODO: criar interface listPlugin
+  const listPlugins = (): { name: string, version: string, description: string }[] => {
     return Array.from(plugins.entries()).map(([name, plugin]) => ({
       name,
       version: plugin.version,

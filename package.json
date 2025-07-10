@@ -12,7 +12,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "dev": "nodemon src/index.ts",
+    "dev": "nodemon src/bin/index.ts",
     "build": "tsc",
     "prepare": "husky"
   },

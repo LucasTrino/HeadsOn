@@ -1,3 +1,3 @@
 export default interface ISingletonInstance {
-  init: (...args: any[]) => void
+  [key: string]: (...args: any[]) => any
 }

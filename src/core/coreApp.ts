@@ -8,14 +8,12 @@ import styledLog from "../lib/styledLog/styledLog.js"
 
 import testPlugin from "../plugins-system/testPlugin.js";
 
-
 // coreApp 
-
 export default coreApp
 
 let instance: ISingletonInstance;
 
-async function coreApp(): Promise<ISingletonInstance> {
+function coreApp(): ISingletonInstance {
 
   if (instance) return instance;
 
@@ -26,15 +24,14 @@ async function coreApp(): Promise<ISingletonInstance> {
   const init = async () => {
     console.log(context.styledLog.blue('HeadsOn is operating...'));
 
-    const pluginManager: IPluginManager = getPluginManager(context);
+    const pluginManager: IPluginManager = getPluginManager();
+    await pluginManager.registerPlugin(testPlugin, context);
 
-    await pluginManager.registerPlugin(testPlugin);
+    // const testPluginInstance = pluginManager.commands.get("teste");
 
-    const testPluginInstance = pluginManager.commands.get("teste");
+    // if (testPluginInstance) await testPluginInstance("--tchau", "--olá");
 
-    if (testPluginInstance) await testPluginInstance();
-
-    pluginManager.listPlugins().forEach(item => console.log(item));
+    // pluginManager.listPlugins().forEach(item => console.log(item));
   }
 
   instance = {
