@@ -18,7 +18,6 @@ function pluginManager(): IPluginManager {
   const registerPlugin = async (plugin: IPlugin, appContext: IAppCoreContext): Promise<void> => {
     if (plugins.has(plugin.name)) return;
 
-    // Validando interface do plugin
     if (!plugin.name || !plugin.version) throw new Error("Plugins must have 'name' and/or 'version' properties.");
 
     if (!plugin.initialize) throw new Error("Plugin must have a 'initialization' function.");
