@@ -26,12 +26,7 @@ function coreApp(): ICoreApp {
 
     const pluginManager: IPluginManager = getPluginManager();
     await pluginManager.registerPlugin(testPlugin, context);
-
-    // const testPluginInstance = pluginManager.commands.get("teste");
-
-    // if (testPluginInstance) await testPluginInstance("--tchau", "--olá");
-
-    // pluginManager.listPlugins().forEach(item => console.log(item));
+    
   }
 
   instance = {
