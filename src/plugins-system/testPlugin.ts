@@ -9,7 +9,7 @@ const testPlugin: IPlugin = {
 
     // TODO/OPTMIZE - 1.7.0
     teste: {
-      options: ['--ola', '--tchau', '--laura'],
+      options: ['--ola', '--tchau'],
       descriptions: 'console a test message.',
       action: async (options: { [key: string]: boolean }) => {
 
