@@ -1,4 +1,4 @@
-import IPlugin from "../core/interfaces/plugins/plugin.interface.js"
+import IPlugin from "../core/services/pluginManager/interfaces/plugin.interface.js"
 
 const testPlugin: IPlugin = {
   name: 'Test Plugin',

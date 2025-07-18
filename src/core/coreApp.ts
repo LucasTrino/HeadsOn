@@ -1,37 +1,35 @@
-// Interfaces Imports
-import IPluginManager from "./interfaces/plugins/pluginManager.interface.js";
-import ICoreApp from "./interfaces/general/coreApp.interface.js";
-import IAppCoreContext from './interfaces/appCoreContext.interface.js';
-// General Imports
-import getPluginManager from "./pluginManager.js";
-import styledLog from "../lib/styledLog/styledLog.js"
+// coreApp.ts
+import IPluginManager from "./services/pluginManager/pluginManager.interface.js";
+import ICoreApp from "./coreApp.interface.js";
+import IAppCoreContext from './coreAppContext.interface.js';
 
+import getPluginManager from "./services/pluginManager/pluginManager.js";
+import styledLog from "../lib/styledLog/styledLog.js"
 import testPlugin from "../plugins-system/testPlugin.js";
 
-// coreApp 
-export default coreApp
+export function createCoreApp(): ICoreApp {
+  let initialized = false;
 
-let instance: ICoreApp;
-let context: IAppCoreContext;
-
-function coreApp(): ICoreApp {
-  if (instance) return instance;
-
-  context = {
-    styledLog: styledLog,
-  }
+  const context: IAppCoreContext = {
+    styledLog,
+  };
 
   async function init(): Promise<void> {
+    if (initialized) return;
+
     console.log(context.styledLog.blue('HeadsOn is operating...'));
 
-    const pluginManager: IPluginManager = getPluginManager();
+    const pluginManager: IPluginManager = getPluginManager;
     await pluginManager.registerPlugin(testPlugin, context);
-    
+
+    initialized = true;
   }
 
-  instance = {
-    init: init,
-  }
-
-  return instance;
+  return Object.freeze<ICoreApp>({
+    init,
+  });
 }
+
+// Singleton export
+const coreApp = createCoreApp();
+export default coreApp;

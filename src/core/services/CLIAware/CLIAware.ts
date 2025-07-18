@@ -1,19 +1,14 @@
-// Dependencies Imports
+// CLIAware.ts
+// Dependencies
 import { Command } from 'commander';
-// Interfaces Imports
-import ICLIAware from '../interfaces/cli/CLIAware.interface.js';
-// General Imports
-import getPluginManager from "../pluginManager.js"
-import coreApp from '../coreApp.js';
+// Interfaces
+import ICLIAware from './CLIAware.interface.js';
+// Core & Plugins
+import getPluginManager from '../pluginManager/pluginManager.js';
+import coreApp from '../../coreApp.js';
 
-export default CLIAware;
-
-const pluginManager = getPluginManager();
-
-let instance: ICLIAware;
-
-function CLIAware(): ICLIAware {
-  if (instance) return instance;
+export function createCLIAware(): ICLIAware {
+  const pluginManager = getPluginManager;
 
   async function createCliInstance(): Promise<void> {
     const program = new Command();
@@ -22,12 +17,12 @@ function CLIAware(): ICLIAware {
       .name('HeadsOn')
       .description('CLI para minha aplicação')
       .version('1.0.0');
-
+      
     // TODO/OPTMIZE - 1.0.0 
     try {
       await pluginManager.registerPluginCommands(program);
     } catch (error: any) {
-      throw new Error(`Failed to register plugins commands.`)
+      throw new Error(`Failed to register plugin commands: ${error.message}`);
     }
 
     program.parse(process.argv);
@@ -35,8 +30,7 @@ function CLIAware(): ICLIAware {
 
   async function init(): Promise<void> {
     try {
-      const main = coreApp();
-      await main.init()
+      await coreApp.init();
       await createCliInstance();
     } catch (error: any) {
       console.error('Application failed to start:', error);
@@ -44,9 +38,11 @@ function CLIAware(): ICLIAware {
     }
   }
 
-  instance = {
-    init: init
-  }
-
-  return instance
+  return Object.freeze<ICLIAware>({
+    init,
+  });
 }
+
+// Singleton
+const CLIAware = createCLIAware();
+export default CLIAware;
