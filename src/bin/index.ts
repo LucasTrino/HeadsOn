@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import CLIAware from "../core/library/CLIAware/CLIAware.js";
+import CLIAware from "../core/services/CLIAware/CLIAware.js";
 import coreApp from "../core/coreApp.js";
 
 async function main() {
