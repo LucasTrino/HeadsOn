@@ -1,10 +1,10 @@
 // coreApp.ts
-import IPluginManager from "./services/pluginManager/pluginManager.interface.js";
+import IPluginManager from "./library/pluginManager/pluginManager.interface.js";
 import ICoreApp from "./coreApp.interface.js";
 import IAppCoreContext from './coreAppContext.interface.js';
 
-import getPluginManager from "./services/pluginManager/pluginManager.js";
-import styledLog from "../lib/styledLog/styledLog.js"
+import getPluginManager from "./library/pluginManager/pluginManager.js";
+import styledLog from "../library/styledLog/styledLog.js"
 import testPlugin from "../plugins-system/testPlugin.js";
 
 export function createCoreApp(): ICoreApp {
