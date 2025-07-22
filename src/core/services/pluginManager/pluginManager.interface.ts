@@ -2,6 +2,7 @@ import IPlugin from "./interfaces/plugin.interface.js";
 import IAppCoreContext from "../../coreAppContext.interface.js";
 import IPluginsList from "./interfaces/pluginList.interface.js";
 import TCommander from "./types/commander.type.js";
+import TPluginCommands from "./types/pluginCommands.type.js";
 
 export default interface IPluginManager {
   plugins: Map<string, IPlugin>;
@@ -21,5 +22,5 @@ export default interface IPluginManager {
 
   listPlugins(): IPluginsList[];
 
-  registerPluginCommands(program: TCommander): Promise<void>;
+  registerPluginCommands(program: TCommander, pluginName: string): Promise<void>;
 }

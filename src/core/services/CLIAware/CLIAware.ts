@@ -5,7 +5,7 @@ import { Command } from 'commander';
 import ICLIAware from './CLIAware.interface.js';
 // Core & Plugins
 import getPluginManager from '../pluginManager/pluginManager.js';
-import coreApp from '../../coreApp.js';
+
 
 export function createCLIAware(): ICLIAware {
   const pluginManager = getPluginManager;
@@ -17,10 +17,12 @@ export function createCLIAware(): ICLIAware {
       .name('HeadsOn')
       .description('CLI para minha aplicação')
       .version('1.0.0');
-      
+
     // TODO/OPTMIZE - 1.0.0 
     try {
-      await pluginManager.registerPluginCommands(program);
+      // TODO/OPTMIZE - 3.1.0 
+      const pluginHandler = process.argv[2].split(":")[0];
+      await pluginManager.registerPluginCommands(program, pluginHandler);
     } catch (error: any) {
       throw new Error(`Failed to register plugin commands: ${error.message}`);
     }
@@ -30,7 +32,6 @@ export function createCLIAware(): ICLIAware {
 
   async function init(): Promise<void> {
     try {
-      await coreApp.init();
       await createCliInstance();
     } catch (error: any) {
       console.error('Application failed to start:', error);

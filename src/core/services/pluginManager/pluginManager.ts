@@ -6,6 +6,7 @@ import IAppCoreContext from "../../coreAppContext.interface.js";
 import IPluginsList from "./interfaces/pluginList.interface.js";
 
 import TCommander from "./types/commander.type.js";
+import TPluginCommand from "./types/pluginCommand.type.js";
 
 export function createPluginManager(): IPluginManager {
   const pluginRegistry = new Map<string, IPlugin>();
@@ -31,37 +32,36 @@ export function createPluginManager(): IPluginManager {
       throw new Error(`Failed to initialize plugin "${plugin.name}": ${err.message}`);
     }
 
-    pluginRegistry.set(plugin.name, plugin);
+    pluginRegistry.set(plugin.handler, plugin);
   }
 
-  async function registerPluginCommands(program: TCommander): Promise<void> {
+  async function registerPluginCommands(program: TCommander, pluginHandler: string): Promise<void> {
     // TODO/QUESTION - 1.3.0
-    const plugins = getPlugins();
+    const plugin = pluginRegistry.get(pluginHandler);
 
-    const allCommands = plugins.flatMap(plugin =>
-      getPluginCommands(plugin.name).map(command => ({
-        plugin,
-        command
-      }))
-    );
+    if (!plugin) {
+      throw new Error(`Plugin "${pluginHandler}" not found.`);
+    }
 
-    for (const { plugin, command } of allCommands) {
-      await registerCommand(program, plugin, command);
+    const commands = Object.entries(plugin.commands);
+
+    for (const [key, details] of commands) {
+      await registerCommand(program, plugin, { name: key, ...details });
     }
   }
 
   // TODO/OPTMIZE - 1.4.0
-  async function registerCommand(program: TCommander, plugin: IPlugin, command: any): Promise<void> {
+  async function registerCommand(program: TCommander, plugin: IPlugin, command: TPluginCommand): Promise<void> {
     const cmd = program.command(`${plugin.handler}:${command.name}`)
-      .description(command.details.descriptions);
+      .description(command.descriptions);
 
     // TODO/OPTMIZE - 1.5.0
-    for (const option of command.details.options || []) {
+    for (const option of command.options || []) {
       applyOptionToCommand(cmd, option);
     }
 
     cmd.action(async (name: string, options: string[]) => {
-      const commandAction = command.details.action;
+      const commandAction = command.action;
       await commandAction(name, options);
     });
   }
