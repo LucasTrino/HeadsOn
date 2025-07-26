@@ -2,7 +2,7 @@
 import ICLIAware from './CLIAware.interface.js';
 
 // import getPluginManager from '../pluginManager/pluginManager.js';
-import cliInterface from '../../../lib/cliInterface/cliInterface.js';
+import cliInterface from '../../../lib/CLIAdapter/CLIAdapter.js';
 
 import testPlugin from '../../../plugins-system/testPlugin.js';
 
