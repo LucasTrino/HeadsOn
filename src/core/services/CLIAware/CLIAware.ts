@@ -19,7 +19,6 @@ export function createCLIAware(): ICLIAware {
     try {
       // TODO/OPTMIZE - 3.1.0 
       const pluginHandler = process.argv[2].split(":")[0];
-      console.log(pluginHandler)
       await cli.registerPluginCLI(testPlugin)
     } catch (error: any) {
       throw new Error(`Failed to register plugin commands: ${error.message}`);
