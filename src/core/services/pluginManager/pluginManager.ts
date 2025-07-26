@@ -1,12 +1,8 @@
 // pluginManager.ts
-
 import IPlugin from "./interfaces/plugin.interface.js";
 import IPluginManager from "./pluginManager.interface.js";
 import IAppCoreContext from "../../coreAppContext.interface.js";
 import IPluginsList from "./interfaces/pluginList.interface.js";
-
-import TCommander from "./types/commander.type.js";
-import TPluginCommand from "./types/pluginCommand.type.js";
 
 export function createPluginManager(): IPluginManager {
   const pluginRegistry = new Map<string, IPlugin>();
@@ -35,46 +31,6 @@ export function createPluginManager(): IPluginManager {
     pluginRegistry.set(plugin.handler, plugin);
   }
 
-  async function registerPluginCommands(program: TCommander, pluginHandler: string): Promise<void> {
-    // TODO/QUESTION - 1.3.0
-    const plugin = pluginRegistry.get(pluginHandler);
-
-    if (!plugin) {
-      throw new Error(`Plugin "${pluginHandler}" not found.`);
-    }
-
-    const commands = Object.entries(plugin.commands);
-
-    for (const [key, details] of commands) {
-      await registerCommand(program, plugin, { name: key, ...details });
-    }
-  }
-
-  // TODO/OPTMIZE - 1.4.0
-  async function registerCommand(program: TCommander, plugin: IPlugin, command: TPluginCommand): Promise<void> {
-    const cmd = program.command(`${plugin.handler}:${command.name}`)
-      .description(command.descriptions);
-
-    // TODO/OPTMIZE - 1.5.0
-    for (const option of command.options || []) {
-      applyOptionToCommand(cmd, option);
-    }
-
-    cmd.action(async (name: string, options: string[]) => {
-      const commandAction = command.action;
-      await commandAction(name, options);
-    });
-  }
-
-  // TODO/OPTMIZE - 1.6.0
-  function applyOptionToCommand(
-    cmd: TCommander,
-    option: string | { flags: string; description: string; defaultValue?: string }
-  ): void {
-    typeof option === 'string' ?
-      cmd.option(option) :
-      option.flags && cmd.option(option.flags, option.description, option.defaultValue);
-  }
 
   function getPluginCommands(pluginName: string): { name: string; details: any }[] {
     const plugin = pluginRegistry.get(pluginName);
@@ -91,6 +47,7 @@ export function createPluginManager(): IPluginManager {
     return Array.from(pluginRegistry.values());
   }
 
+  // TODO/OPTIMIZE - 3.2.0
   function listPlugins(): IPluginsList[] {
     return getPlugins().map(plugin => ({
       name: plugin.name,
@@ -104,8 +61,7 @@ export function createPluginManager(): IPluginManager {
     registerPlugin: register,
     getPlugins,
     getPluginsCommands: getPluginCommands,
-    listPlugins,
-    registerPluginCommands,
+    listPlugins
   });
 }
 

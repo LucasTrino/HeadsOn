@@ -21,6 +21,4 @@ export default interface IPluginManager {
   }[];
 
   listPlugins(): IPluginsList[];
-
-  registerPluginCommands(program: TCommander, pluginName: string): Promise<void>;
 }

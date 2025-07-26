@@ -6,13 +6,13 @@ const testPlugin: IPlugin = {
   description: 'Test Plugin',
   handler: "testPlugin",
   commands: {
-
-    // TODO/OPTMIZE - 1.7.0
     teste: {
-      options: ['--ola', '--tchau'],
-      descriptions: 'console a test message.',
+      options: [
+        { flags: '-o, --ola', description: 'console "Olá"' },
+        { flags: '-t, --tchau', description: 'console "Tchau"' },
+      ],
+      description: 'console a test message.',
       action: async (options: { [key: string]: boolean }) => {
-
         // TODO/OPTMIZE - 1.8.0
         if (options.ola) {
           console.log(`Test Plugin execution success with "Olá"!`);

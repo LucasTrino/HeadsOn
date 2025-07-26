@@ -1,33 +1,31 @@
 // CLIAware.ts
-// Dependencies
-import { Command } from 'commander';
-// Interfaces
 import ICLIAware from './CLIAware.interface.js';
-// Core & Plugins
-import getPluginManager from '../pluginManager/pluginManager.js';
+
+// import getPluginManager from '../pluginManager/pluginManager.js';
+import cliInterface from '../../../lib/cliInterface/cliInterface.js';
+
+import testPlugin from '../../../plugins-system/testPlugin.js';
 
 
 export function createCLIAware(): ICLIAware {
-  const pluginManager = getPluginManager;
+  // const pluginManager = getPluginManager;
 
   async function createCliInstance(): Promise<void> {
-    const program = new Command();
+    const cli = cliInterface;
+    const program = cli.getCommanderCLI()
 
-    program
-      .name('HeadsOn')
-      .description('CLI para minha aplicação')
-      .version('1.0.0');
-
+    cli.initializeCLI()
     // TODO/OPTMIZE - 1.0.0 
     try {
       // TODO/OPTMIZE - 3.1.0 
       const pluginHandler = process.argv[2].split(":")[0];
-      await pluginManager.registerPluginCommands(program, pluginHandler);
+      console.log(pluginHandler)
+      await cli.registerPluginCLI(testPlugin)
     } catch (error: any) {
       throw new Error(`Failed to register plugin commands: ${error.message}`);
     }
 
-    program.parse(process.argv);
+    cli.parseCLI(process.argv)
   }
 
   async function init(): Promise<void> {
