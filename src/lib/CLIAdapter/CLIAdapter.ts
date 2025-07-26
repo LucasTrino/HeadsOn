@@ -31,10 +31,10 @@ function CLIInterface() {
     commands.push(command)
   }
 
-  function registerCommand(pluginHandler: string, command: TPluginCommand): void {
+  function registerCommand(handler: string, command: TPluginCommand): void {
     const { name } = command;
 
-    const cmd = program.command(`${pluginHandler}:${name}`);
+    const cmd = program.command(`${handler}:${name}`);
     cmd.description(command.description);
 
     cmd.action(async (name: string, options: string[] | TPluginOptions[]) => {
@@ -54,11 +54,11 @@ function CLIInterface() {
       option.flags && command.option(option.flags, option.description, option.defaultValue);
   }
 
-  function registerPluginCommands(pluginHandler: string, commands: TPluginCommands): void {
+  function registerPluginCommands(handler: string, commands: TPluginCommands): void {
     const commandsValues = Object.entries(commands);
 
     for (const [key, details] of commandsValues) {
-      registerCommand(pluginHandler, { name: key, ...details });
+      registerCommand(handler, { name: key, ...details });
     }
 
   }
