@@ -47,13 +47,11 @@ function CLIInterface() {
   function applyOptionToCommand(
     command: TCommander,
     option: string | TPluginOptions
-  ): TCommander {
+  ): void {
 
     typeof option === 'string' ?
       command.option(option) :
       option.flags && command.option(option.flags, option.description, option.defaultValue);
-
-    return command;
   }
 
   function registerPluginCommands(pluginHandler: string, commands: TPluginCommands): void {
