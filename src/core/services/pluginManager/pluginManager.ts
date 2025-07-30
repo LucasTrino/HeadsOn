@@ -31,7 +31,6 @@ export function createPluginManager(): IPluginManager {
     pluginRegistry.set(plugin.handler, plugin);
   }
 
-
   function getPluginCommands(pluginName: string): { name: string; details: any }[] {
     const plugin = pluginRegistry.get(pluginName);
     if (!plugin) return [];
@@ -43,13 +42,19 @@ export function createPluginManager(): IPluginManager {
   }
 
   // TODO/QUESTION - 1.3.0
-  function getPlugins(): IPlugin[] {
+  function getAllPlugins(): IPlugin[] {
     return Array.from(pluginRegistry.values());
+  }
+
+  function getSinglePlugin(name: string): IPlugin | undefined {
+    return pluginRegistry.has(name) ?
+      pluginRegistry.get(name) :
+      undefined;
   }
 
   // TODO/OPTIMIZE - 3.2.0
   function listPlugins(): IPluginsList[] {
-    return getPlugins().map(plugin => ({
+    return getAllPlugins().map(plugin => ({
       name: plugin.name,
       version: plugin.version,
       description: plugin.description ?? '',
@@ -57,9 +62,9 @@ export function createPluginManager(): IPluginManager {
   }
 
   return Object.freeze<IPluginManager>({
-    plugins: pluginRegistry,
     registerPlugin: register,
-    getPlugins,
+    getAllPlugins,
+    getSinglePlugin,
     getPluginsCommands: getPluginCommands,
     listPlugins
   });

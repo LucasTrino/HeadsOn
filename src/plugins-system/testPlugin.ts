@@ -21,7 +21,6 @@ const testPlugin: IPlugin = {
           console.log(`Test Plugin execution success with "Tchau"!`);
         }
         console.log(`Test Plugin execution success!`);
-
       }
     }
   },

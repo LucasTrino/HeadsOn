@@ -18,10 +18,10 @@ export function createCoreApp(): ICoreApp {
   async function init(): Promise<void> {
     if (initialized) return;
 
+    console.log(context.styledLog.blue('HeadsOn is operating...'));
+
     const pluginManager: IPluginManager = getPluginManager;
     await pluginManager.registerPlugin(testPlugin, context);
-
-    console.log(context.styledLog.blue('HeadsOn is operating...'));
 
     initialized = true;
   }

@@ -1,14 +1,11 @@
 // CLIAware.ts
 import ICLIAware from './CLIAware.interface.js';
 
-// import getPluginManager from '../pluginManager/pluginManager.js';
+import getPluginManager from '../pluginManager/pluginManager.js';
 import cliInterface from '../../../lib/CLIAdapter/CLIAdapter.js';
 
-import testPlugin from '../../../plugins-system/testPlugin.js';
-
-
 export function createCLIAware(): ICLIAware {
-  // const pluginManager = getPluginManager;
+  const pluginManager = getPluginManager;
 
   async function createCliInstance(): Promise<void> {
     const cli = cliInterface;
@@ -19,7 +16,12 @@ export function createCLIAware(): ICLIAware {
     try {
       // TODO/OPTMIZE - 3.1.0 
       const pluginHandler = process.argv[2].split(":")[0];
-      await cli.registerPluginCLI(testPlugin)
+      const pluginInstance = pluginManager.getSinglePlugin(pluginHandler);
+      if (pluginInstance) {
+        await cli.registerPluginCLI(pluginInstance)
+      } else {
+        throw Error(`Plugin ${pluginHandler} not found.`)
+      }
     } catch (error: any) {
       throw new Error(`Failed to register plugin commands: ${error.message}`);
     }
