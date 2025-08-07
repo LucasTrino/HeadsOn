@@ -20,6 +20,9 @@ const testPlugin: IPlugin = {
         if (options.tchau) {
           console.log(`Test Plugin execution success with "Tchau"!`);
         }
+        if (options.lol) {
+          console.log(`Test Plugin execution success with "LOL"!`);
+        }
         console.log(`Test Plugin execution success!`);
       }
     }

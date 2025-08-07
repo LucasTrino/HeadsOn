@@ -1,3 +1,4 @@
+// TODO/OPTMIZE - 3.8.0
 // CLIAdapter.ts
 import { Command } from 'commander';
 
@@ -7,179 +8,154 @@ import ICLIAdapter from './CLIAdapter.interface.js';
 import TPluginCommand from '../../core/services/pluginManager/types/pluginCommand.type.js';
 import TCommander from '../../core/services/pluginManager/types/commander.type.js';
 import TPluginOption from '../../core/services/pluginManager/types/pluginOption.type.js';
-import TPluginCommands from '../../core/services/pluginManager/types/pluginCommands.type.js';
+import TCommandContext from './types/commandContext.type.js';
+
+import { validateCommand } from './helpers/commandValidation.js'
 
 // TODO/OPTIMIZE - 3.3.0
 function CreateCLIAdapter(): ICLIAdapter {
   const program = new Command();
-  const registeredCommands = new Map<string, TPluginCommand>();
+  const registeredCommands = new Map<string, TCommandContext>();
 
-  function initializeCLI(): void {
+  // TODO/OPTMIZE - 3.7.0
+  function initialize(): TCommander {
     program
       .name('HeadsOn')
       .description('CLI para minha aplicação')
       .version('1.0.0');
+
+    return program;
   }
 
-  function parseCLI(argv: string[]): TCommander {
+  function parse(argv: string[]): TCommander {
     if (!Array.isArray(argv)) {
-      throw new Error('CLIAdapter: parseCLI expects an array of arguments');
+      throw new Error('CLIAdapter: parse expects an array of arguments');
     }
 
     return program.parse(argv);
   }
 
-  function getCommanderCLI(): TCommander {
+  function getCommander(): TCommander {
     return program;
   }
 
-  function addOptions(
-    pcmd: TCommander,
+  function getCommand(commandKey: string): TCommandContext | undefined {
+    return registeredCommands.has(commandKey) ? registeredCommands.get(commandKey) : undefined;
+  }
+
+  function applyOptionToCommand(
+    cmdInstance: TCommander,
     option: TPluginOption
   ): TCommander {
 
+    if (!option || !cmdInstance)
+      throw new TypeError("'option' and/or 'cmdInstance' parameters must be passed.");
+
     if (typeof option === 'string') {
-      pcmd.option(option);
+      cmdInstance.option(option);
     } else if (option.flags) {
-      pcmd.option(
+      cmdInstance.option(
         option.flags,
         option.description,
         option.defaultValue
       );
     }
-    return pcmd;
+
+    return cmdInstance;
   }
 
-  function registerCommandOptions(pcmd: TCommander, options: TPluginOption[]): TCommander {
+  async function registerOptions(cmdInstance: TCommander, options: TPluginOption[]): Promise<TCommander> {
 
     if (typeof options === 'undefined' || options.length === 0)
       throw new TypeError("Command's 'options' must to be a non-empty array.");
 
     for (const option of options) {
-      addOptions(pcmd, option)
+      applyOptionToCommand(cmdInstance, option)
     }
 
-    return pcmd;
+    return cmdInstance
   }
 
-  function addCommand(handler: string, command: TPluginCommand): TCommander {
-    const { name, description, action } = command;
+  async function registerCommand(command: TPluginCommand, handler?: string): Promise<TCommandContext> {
+    let cmdInstance, context;
 
-    // TODO/OPTIMIZE - 3.5.0
-    if (command === null || typeof command !== 'object')
-      throw new TypeError("command parameter must be a non-null object.");
+    try {
+      validateCommand(command);
 
-    if (typeof name !== 'string' || name.trim().length === 0)
-      throw new TypeError("Command's 'name' must be a non-empty string.");
+      const { name, options, description, action } = command;
 
-    if (typeof handler !== 'string' || handler.trim().length === 0)
-      throw new TypeError("Command's 'handler' must be a non-empty string.");
-
-    if (typeof action !== 'function')
-      throw new TypeError("Command must have an 'action' function.");
-
-    if ('description' in command && typeof command.description !== 'string')
-      throw new TypeError("Command 'description' must be a string if provided");
-
-    const commandKey = `${handler}:${command.name}`;
-
-    if (registeredCommands.has(commandKey)) {
-      throw new Error(`Command ${commandKey} already registered`);
-    }
-
-    const pcmd = program.command(commandKey);
-
-    pcmd.description(description);
-
-    pcmd.action(async (name: string, options: TPluginOption[]) => {
-      try {
-        await command.action(name, options);
-      } catch (error) {
-        throw new Error(`Error executing command ${commandKey}: ${error}`);
-      }
-    });
-
-    registeredCommands.set(commandKey, command);
-
-    return pcmd;
-  }
-
-  function registerPluginCommands(handler: string, commands: TPluginCommands): Promise<Array<{
-    name: string;
-    command: TPluginCommand,
-    pcmd: TCommander;
-    handler: string;
-  }>> {
-    return new Promise((resolve, reject) => {
-      if (typeof handler !== 'string' || handler.trim().length === 0)
-        reject(new TypeError("Command's 'handler' must be a non-empty string."));
-
-      if (commands === null || typeof commands !== 'object')
-        reject(new TypeError("commands parameter must be a non-null object."));
-
-      const commandsEntries = Object.entries(commands);
-
-      // TODO/OPTMIZE - 3.4.0 
-      if (!commandsEntries.length) {
-        console.warn(`No commands provided for handler: ${handler}`);
-        return []
+      const commandKey = typeof handler !== 'undefined' ?
+        `${handler}:${name}` :
+        name;
+        
+      if (registeredCommands.has(commandKey)) {
+        throw new Error(`Command ${commandKey} already registered.`);
       }
 
-      const processedCommands = commandsEntries.map(([name, config]) => {
-        const commandInstance = addCommand(handler, { name, ...config });
-        return {
-          name,
-          handler,
-          command: { name, ...config },
-          pcmd: commandInstance
-        };
+      cmdInstance = program.command(commandKey);
+
+      cmdInstance.description(description);
+
+      cmdInstance.action(async (...args: any[]) => {
+        try {
+          await action(...args);
+        } catch (error) {
+          console.error(`Error executing command ${commandKey}: ${error}`);
+          throw error;
+        }
       });
 
-      resolve(processedCommands)
-    })
+      if (typeof options !== 'undefined')
+        registerOptions(cmdInstance, options)
+
+      context = { commandKey, command, cmdInstance };
+
+      registeredCommands.set(commandKey, context);
+
+      return context;
+
+    } catch (error: any) {
+      throw error;
+    }
 
   }
 
-  async function registerPluginCLI(plugin: IPlugin): Promise<IPlugin> {
+  async function registerPlugin(plugin: IPlugin): Promise<IPlugin> {
     const { handler, commands } = plugin;
 
     if (typeof handler !== 'string' || handler.trim().length === 0)
       throw new TypeError("Command's 'handler' must be a non-empty string.");
 
-    if (commands === null || typeof commands !== 'object')
-      throw new TypeError("command parameter must be a non-null object.");
-
     if (!handler || !commands)
       throw new Error("Plugin must have handler and commands.");
 
-    const commandValues = Object.values(commands);
+    const commandsEntries = Object.entries(commands);
 
-    if (!commandValues.length)
+    if (!commandsEntries.length)
       throw new Error(`No commands provided in the plugin: ${handler}`);
 
-    let pcmd: TCommander;
+    const results = await Promise.allSettled(commandsEntries.map(([name, config]) =>
+      registerCommand({ name, ...config }, handler)
+    ));
 
-    await registerPluginCommands(handler, commands)
-      .then(async commands => {
-        return Promise.all(
-          commands.map(({ pcmd, command }) =>
-            registerCommandOptions(pcmd, command.options)
-          )
-        );
-      });
+    for (const result of results) {
+      if (result.status === 'rejected') {
+        console.warn(`Failed to register plugin commands for ${handler}:`, result.reason);
+      }
+    }
 
     return plugin;
   }
 
   return Object.freeze({
-    initializeCLI,
-    parseCLI,
-    getCommanderCLI,
-    addOptions,
-    registerCommandOptions,
-    addCommand,
-    registerPluginCommands,
-    registerPluginCLI
+    initialize,
+    parse,
+    getCommander,
+    getCommand,
+    applyOptionToCommand,
+    registerOptions,
+    registerCommand,
+    registerPlugin
   })
 }
 

@@ -1,3 +1,3 @@
 export default interface ICLIAware {
-  init: () => Promise<void>;
+  init: (context: {}) => Promise<void>;
 }

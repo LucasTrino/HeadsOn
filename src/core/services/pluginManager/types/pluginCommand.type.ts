@@ -2,7 +2,7 @@ import TPluginOption from "./pluginOption.type.js";
 
 export type TPluginCommand = {
   name: string;
-  options: TPluginOption[];
+  options?: TPluginOption[];
   description: string;
   action: (...options: any[]) => Promise<any> | Function;
 };

@@ -4,21 +4,19 @@ import TPluginCommands from '../../core/services/pluginManager/types/pluginComma
 import TCommander from '../../core/services/pluginManager/types/commander.type.js';
 import TPluginOption from '../../core/services/pluginManager/types/pluginOption.type.js';
 import TPluginCommand from '../../core/services/pluginManager/types/pluginCommand.type.js';
+import TCommandContext from './types/commandContext.type.js';
 
 interface ICLIAdapter {
-  initializeCLI(): void;
-  parseCLI(argv: string[]): TCommander;
-  getCommanderCLI(): TCommander;
-  addOptions(command: TCommander, option: TPluginOption): TCommander;
-  registerCommandOptions(pcmd: TCommander, options: TPluginOption[]): TCommander;
-  addCommand(handler: string, command: TPluginCommand): TCommander;
-  registerPluginCommands(handler: string, commands: TPluginCommands): Promise<Array<{
-    name: string;
-    command: TPluginCommand;
-    pcmd: TCommander;
-    handler: string;
-  }>>;
-  registerPluginCLI(plugin: IPlugin): Promise<IPlugin>;
+  initialize(): TCommander;
+  parse(argv: string[]): TCommander;
+  getCommander(): TCommander;
+  getCommand(commandKey: string): TCommandContext | undefined;
+  applyOptionToCommand(cmdInstance: TCommander,
+    option: TPluginOption
+  ): TCommander;
+  registerOptions(cmdInstance: TCommander, options: TPluginOption[]): Promise<TCommander>;
+  registerCommand(command: TPluginCommand, handler?: string): Promise<TCommandContext>;
+  registerPlugin(plugin: IPlugin): Promise<IPlugin>;
 }
 
 export default ICLIAdapter;
