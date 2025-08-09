@@ -34,7 +34,6 @@ export function createMiddleware<T extends MiddlewareType.TMiddlewareContext = M
         if (index >= pipelines.length) {
           return;
         }
-
         const layer = pipelines[index++];
 
         try {

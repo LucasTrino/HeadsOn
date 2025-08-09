@@ -1,19 +1,17 @@
 // TODO/OPTMIZE - 3.8.0
 // CLIAware.ts
 import ICLIAware from './CLIAware.interface.js';
-import IPluginManager from '../pluginManager/pluginManager.interface.js';
 
 import cliAdapter from '../../../lib/CLIAdapter/CLIAdapter.js';
 
-import getPluginManager from '../pluginManager/pluginManager.js';
+// import getPluginManager from '../pluginManager/pluginManager.js';
+import PluginOrchestrator from '../PluginOrchestrator/PluginOrchestrator.js';
 import testPlugin from '../../../plugins-system/testPlugin.js';
 
 export function createCLIAware(): ICLIAware {
-  const pluginManager: IPluginManager = getPluginManager;
 
   async function createCliInstance(context: {}): Promise<void> {
 
-    await pluginManager.registerPlugin(testPlugin, context);
     const cli = cliAdapter;
 
     cli.initialize();
@@ -22,14 +20,11 @@ export function createCLIAware(): ICLIAware {
     try {
       // TODO/OPTMIZE - 3.1.0 
       const pluginHandler = process.argv[2].split(":")[0];
-      const pluginInstance = pluginManager.getSinglePlugin(pluginHandler);
 
-      if (pluginInstance) {
-        await cli.registerPlugin(pluginInstance);
-      } else {
-        throw Error(`Plugin ${pluginHandler} not found.`)
-      }
-      
+      const pluginOrchestrator = PluginOrchestrator();
+      pluginOrchestrator.init()
+      await pluginOrchestrator.registerPlugin(testPlugin, context);
+
     } catch (error: any) {
       throw new Error(`Failed to register plugin commands: ${error.message}`);
     }
