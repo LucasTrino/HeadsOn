@@ -7,22 +7,42 @@ import IPluginsList from "./interfaces/pluginList.interface.js";
 export function createPluginManager(): IPluginManager {
   const pluginRegistry = new Map<string, IPlugin>();
 
-  async function validatePlugin(plugin: IPlugin): Promise<void> {
+  async function validatePlugin(plugin: IPlugin): Promise<{ isValid: boolean, errors: string[] }> {
     // TODO/OPTMIZE - 1.1.0
-    if (!plugin.name || !plugin.version) throw new Error("Plugins must have 'name' and 'version'.");
-    if (!plugin.initialize || typeof plugin.initialize !== 'function') {
-      throw new Error("Plugin must have an 'initialize' function.");
-    }
+    const errors: string[] = [];
+
+    if (!plugin.name?.trim())
+      errors.push(`Plugin must have a 'name'.`);
+
+    if (!plugin.version?.trim())
+      errors.push(`Plugin must have a 'version'.`);
+
+    if (typeof plugin.handler !== 'string' || plugin.handler.trim().length === 0)
+      errors.push(`Command's 'handler' must be a non-empty string.`);
+
+    if (typeof plugin.initialize !== 'function')
+      errors.push(`Plugin must have an 'initialize' function.`);
+
     if (!plugin.commands || Object.keys(plugin.commands).length === 0) {
-      throw new Error("Plugin must define at least one command.");
+      errors.push(`Plugin must define at least one command.`);
+    } else {
+      for (const [commandName, command] of Object.entries(plugin.commands)) {
+        if (typeof command.action !== 'function') {
+          errors.push(`Command '${commandName}' must to be function.`);
+        }
+      }
     }
+
+    return {
+      isValid: errors.length === 0,
+      errors
+    };
   }
 
   async function register(plugin: IPlugin, context: IAppCoreContext): Promise<void> {
     if (pluginRegistry.has(plugin.name)) return;
 
     try {
-      await validatePlugin(plugin);
       await plugin.initialize(context);
     } catch (err: any) {
       throw new Error(`Failed to initialize plugin "${plugin.name}": ${err.message}`);
@@ -62,6 +82,7 @@ export function createPluginManager(): IPluginManager {
   }
 
   return Object.freeze<IPluginManager>({
+    validatePlugin,
     registerPlugin: register,
     getAllPlugins,
     getSinglePlugin,

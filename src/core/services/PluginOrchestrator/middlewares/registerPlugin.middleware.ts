@@ -8,7 +8,6 @@ export default RegisterPlugin;
 function RegisterPlugin() {
   async function handle(context: { plugin: IPlugin, appContext: IAppCoreContext }, next: MiddlewareType.TNextFunction): Promise<void> {
     const pluginManager = getPluginManager;
-
     const { plugin, appContext } = context;
 
     await pluginManager.registerPlugin(plugin, appContext);

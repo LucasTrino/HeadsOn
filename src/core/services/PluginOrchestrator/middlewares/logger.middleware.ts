@@ -7,9 +7,6 @@ export default PluginLogger;
 function PluginLogger() {
   async function handle(context: { plugin: IPlugin, appContext: IAppCoreContext }, next: MiddlewareType.TNextFunction): Promise<void> {
     console.log('Registrando plugin:', context.plugin.handler);
-    // return next().then(() => {
-    //   console.log('Plugin registrado!');
-    // });
 
     await next();
   }

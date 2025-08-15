@@ -15,7 +15,7 @@ async function main() {
     await coreApp.init();
     await CLIAware.init(context);
   } catch (error) {
-    console.error('Application failed to start:', error);
+    console.error('Application - failed to start:', error);
     process.exit(1);
   }
 }

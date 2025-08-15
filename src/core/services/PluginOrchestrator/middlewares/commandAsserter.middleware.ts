@@ -12,12 +12,6 @@ function CommandAsserter() {
 
     const { handler, commands } = context.plugin;
 
-    if (typeof handler !== 'string' || handler.trim().length === 0)
-      throw new TypeError("Command's 'handler' must be a non-empty string.");
-
-    if (!handler || !commands)
-      throw new Error("Plugin must have handler and commands.");
-
     const commandsEntries = Object.entries(commands);
 
     if (!commandsEntries.length)

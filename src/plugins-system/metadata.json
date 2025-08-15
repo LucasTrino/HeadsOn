@@ -1,0 +1,4 @@
+{
+  "handler": "testPlugin",
+  "modulePath": "./test-plugin/index.js"
+}
