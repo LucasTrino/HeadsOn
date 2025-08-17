@@ -6,7 +6,7 @@ import IPluginOrchestrator from '../PluginOrchestrator/interfaces/pluginOrchestr
 import cliAdapter from '../../../lib/CLIAdapter/CLIAdapter.js';
 
 import PluginOrchestrator from '../PluginOrchestrator/PluginOrchestrator.js';
-import testPlugin from '../../../plugins-system/index.js';
+import testPlugin from '../../../plugins/system/test-plugin/index.js';
 
 export function createCLIAware(): ICLIAware {
 
