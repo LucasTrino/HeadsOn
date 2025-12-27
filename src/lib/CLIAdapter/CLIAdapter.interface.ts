@@ -5,18 +5,19 @@ import TCommander from '../../core/services/pluginManager/types/commander.type.j
 import TPluginOption from '../../core/services/pluginManager/types/pluginOption.type.js';
 import TPluginCommand from '../../core/services/pluginManager/types/pluginCommand.type.js';
 import TCommandContext from './types/commandContext.type.js';
+import ICoreContext from '../../core/services/coreContext/coreContext.interface.js';
 
 interface ICLIAdapter {
   initialize(): TCommander;
-  parse(argv: string[]): TCommander;
+  parse(argv: string[]): Promise<TCommander>;
   getCommander(): TCommander;
   getCommand(commandKey: string): TCommandContext | undefined;
   applyOptionToCommand(cmdInstance: TCommander,
     option: TPluginOption
   ): TCommander;
   registerOptions(cmdInstance: TCommander, options: TPluginOption[]): Promise<TCommander>;
-  registerCommand(command: TPluginCommand, handler?: string): Promise<TCommandContext>;
-  registerPlugin(plugin: IPlugin): Promise<IPlugin>;
+  registerCommand(command: TPluginCommand, coreContext: ICoreContext, handler?: string): Promise<TCommandContext>;
+  registerPlugin(plugin: IPlugin, coreContext: ICoreContext): Promise<IPlugin>;
 }
 
 export default ICLIAdapter;

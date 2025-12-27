@@ -10,7 +10,9 @@ import TCommander from '../../core/services/pluginManager/types/commander.type.j
 import TPluginOption from '../../core/services/pluginManager/types/pluginOption.type.js';
 import TCommandContext from './types/commandContext.type.js';
 
+// TODO/OPTMIZE - 3.8.3
 import { validateCommand } from './helpers/commandValidation.js'
+import ICoreContext from '../../core/services/coreContext/coreContext.interface.js';
 
 // TODO/OPTIMIZE - 3.3.0
 function CreateCLIAdapter(): ICLIAdapter {
@@ -27,12 +29,12 @@ function CreateCLIAdapter(): ICLIAdapter {
     return program;
   }
 
-  function parse(argv: string[]): TCommander {
+  function parse(argv: string[]): Promise<TCommander> {
     if (!Array.isArray(argv)) {
       throw new Error('CLIAdapter: parse expects an array of arguments');
     }
 
-    return program.parse(argv);
+    return program.parseAsync(argv);
   }
 
   function getCommander(): TCommander {
@@ -76,7 +78,7 @@ function CreateCLIAdapter(): ICLIAdapter {
     return cmdInstance
   }
 
-  async function registerCommand(command: TPluginCommand, handler?: string): Promise<TCommandContext> {
+  async function registerCommand(command: TPluginCommand, appContext: ICoreContext, handler?: string): Promise<TCommandContext> {
     let cmdInstance, context;
 
     try {
@@ -87,7 +89,7 @@ function CreateCLIAdapter(): ICLIAdapter {
       const commandKey = typeof handler !== 'undefined' ?
         `${handler}:${name}` :
         name;
-        
+
       if (registeredCommands.has(commandKey)) {
         throw new Error(`Command ${commandKey} already registered.`);
       }
@@ -95,6 +97,10 @@ function CreateCLIAdapter(): ICLIAdapter {
       cmdInstance = program.command(commandKey);
 
       cmdInstance.description(description);
+
+      cmdInstance.hook('preAction', (thisCommand: any) => {
+        thisCommand.coreContext = appContext;
+      })
 
       cmdInstance.action(async (...args: any[]) => {
         try {
@@ -119,8 +125,8 @@ function CreateCLIAdapter(): ICLIAdapter {
     }
 
   }
-
-  async function registerPlugin(plugin: IPlugin): Promise<IPlugin> {
+  // TODO/OPTMIZE - 3.8.2
+  async function registerPlugin(plugin: IPlugin, appContext: ICoreContext): Promise<IPlugin> {
     const { handler, commands } = plugin;
 
     if (typeof handler !== 'string' || handler.trim().length === 0)
@@ -135,7 +141,7 @@ function CreateCLIAdapter(): ICLIAdapter {
       throw new Error(`No commands provided in the plugin: ${handler}`);
 
     const results = await Promise.allSettled(commandsEntries.map(([name, config]) =>
-      registerCommand({ name, ...config }, handler)
+      registerCommand({ name, ...config }, appContext, handler)
     ));
 
     for (const result of results) {

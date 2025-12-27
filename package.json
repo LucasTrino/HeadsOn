@@ -13,7 +13,7 @@
   },
   "scripts": {
     "dev": "nodemon src/index.ts",
-    "dev:cli": "nodemon src/bin/index.ts testPlugin:teste --tchau",
+    "dev:cli": "nodemon src/bin/index.ts testPlugin:teste --greeting 'Olá'",
     "build": "tsc",
     "prepare": "husky"
   },

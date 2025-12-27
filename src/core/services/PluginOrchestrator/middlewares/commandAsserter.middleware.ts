@@ -1,13 +1,13 @@
 import * as MiddlewareType from '../../../../lib/middleware/middleware.type.js';
 import IPlugin from '../../pluginManager/interfaces/plugin.interface.js';
-import IAppCoreContext from '../../../coreAppContext.interface.js';
+import ICoreContext from '../../coreContext/coreContext.interface.js';
 
 import CLIAdapter from '../../../../lib/CLIAdapter/CLIAdapter.js';
 
 export default CommandAsserter;
 
 function CommandAsserter() {
-  async function handle(context: { plugin: IPlugin, appContext: IAppCoreContext }, next: MiddlewareType.TNextFunction): Promise<void> {
+  async function handle(context: { plugin: IPlugin, appContext: ICoreContext }, next: MiddlewareType.TNextFunction): Promise<void> {
     const cli = CLIAdapter;
 
     const { handler, commands } = context.plugin;
@@ -18,7 +18,7 @@ function CommandAsserter() {
       throw new Error(`No commands provided in the plugin: ${handler}`);
 
     const results = await Promise.allSettled(commandsEntries.map(([name, config]) =>
-      cli.registerCommand({ name, ...config }, handler)
+      cli.registerCommand({ name, ...config }, context.appContext, handler)
     ));
 
     for (const result of results) {

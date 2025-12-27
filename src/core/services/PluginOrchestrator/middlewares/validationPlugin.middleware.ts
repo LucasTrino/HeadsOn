@@ -1,16 +1,6 @@
-// const validationMiddleware: PluginMiddleware = async (context, next) => {
-//   if (!context.plugin?.isValid()) {
-//     console.error(`Plugin inválido: ${context.plugin?.id}`);
-//     delete context.plugin; // Impede o registro
-//     return;
-//   }
-//   await next();
-// };
-
-
 import { TNextFunction } from '../../../../lib/middleware/middleware.type.js';
 import IPlugin from '../../pluginManager/interfaces/plugin.interface.js';
-import IAppCoreContext from '../../../coreAppContext.interface.js';
+import ICoreContext from '../../coreContext/coreContext.interface.js';
 import getPluginManager from '../../pluginManager/pluginManager.js';
 
 export default ValidatorPlugin;
@@ -18,7 +8,7 @@ export default ValidatorPlugin;
 function ValidatorPlugin() {
 
   async function handle(
-    context: { plugin: IPlugin; appContext: IAppCoreContext },
+    context: { plugin: IPlugin; appContext: ICoreContext },
     next: TNextFunction
   ): Promise<void> {
     const pluginManager = getPluginManager;

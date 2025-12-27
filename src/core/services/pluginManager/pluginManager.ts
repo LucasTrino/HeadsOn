@@ -1,7 +1,7 @@
 // pluginManager.ts
 import IPlugin from "./interfaces/plugin.interface.js";
 import IPluginManager from "./pluginManager.interface.js";
-import IAppCoreContext from "../../coreAppContext.interface.js";
+import ICoreContext from "../coreContext/coreContext.interface.js";
 import IPluginsList from "./interfaces/pluginList.interface.js";
 
 export function createPluginManager(): IPluginManager {
@@ -39,7 +39,7 @@ export function createPluginManager(): IPluginManager {
     };
   }
 
-  async function register(plugin: IPlugin, context: IAppCoreContext): Promise<void> {
+  async function register(plugin: IPlugin, context: ICoreContext): Promise<void> {
     if (pluginRegistry.has(plugin.name)) return;
 
     try {
@@ -51,6 +51,7 @@ export function createPluginManager(): IPluginManager {
     pluginRegistry.set(plugin.handler, plugin);
   }
 
+  // TODO/OPTMIZE - 3.8.4
   function getPluginCommands(pluginName: string): { name: string; details: any }[] {
     const plugin = pluginRegistry.get(pluginName);
     if (!plugin) return [];

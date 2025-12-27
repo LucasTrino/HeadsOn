@@ -1,4 +1,4 @@
-import IAppCoreContext from "../../../coreAppContext.interface.js"
+import ICoreContext from "../../coreContext/coreContext.interface.js"
 import TPluginCommands from "../types/pluginCommands.type.js";
 
 export default interface IPlugin {
@@ -6,7 +6,7 @@ export default interface IPlugin {
   version: string;
   handler: string,
   description?: string,
-  initialize: (context: IAppCoreContext) => Promise<void>;
+  initialize: (context: ICoreContext) => Promise<void>;
   shutdown?: () => Promise<void>;
   commands: TPluginCommands;
 }
