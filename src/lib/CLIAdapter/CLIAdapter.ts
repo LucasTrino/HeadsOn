@@ -5,7 +5,7 @@ import { Command } from 'commander';
 import IPlugin from '../../core/services/pluginManager/interfaces/plugin.interface.js';
 import ICLIAdapter from './CLIAdapter.interface.js';
 
-import TPluginCommand from '../../core/services/pluginManager/types/pluginCommand.type.js';
+import TPluginCommandRegister from '../../core/services/pluginManager/types/pluginCommandRegister.type.js';
 import TCommander from '../../core/services/pluginManager/types/commander.type.js';
 import TPluginOption from '../../core/services/pluginManager/types/pluginOption.type.js';
 import TCommandContext from './types/commandContext.type.js';
@@ -78,7 +78,7 @@ function CreateCLIAdapter(): ICLIAdapter {
     return cmdInstance
   }
 
-  async function registerCommand(command: TPluginCommand, appContext: ICoreContext, handler?: string): Promise<TCommandContext> {
+  async function registerCommand(command: TPluginCommandRegister, appContext: ICoreContext, handler?: string): Promise<TCommandContext> {
     let cmdInstance, context;
 
     try {

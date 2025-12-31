@@ -1,6 +1,6 @@
 export type TPluginOption = {
   flags: string;
-  description?: string;
+  description: string;
   defaultValue?: string
 } | string
 

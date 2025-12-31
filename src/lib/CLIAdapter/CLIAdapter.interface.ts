@@ -3,7 +3,7 @@ import IPlugin from '../../core/services/pluginManager/interfaces/plugin.interfa
 import TPluginCommands from '../../core/services/pluginManager/types/pluginCommands.type.js';
 import TCommander from '../../core/services/pluginManager/types/commander.type.js';
 import TPluginOption from '../../core/services/pluginManager/types/pluginOption.type.js';
-import TPluginCommand from '../../core/services/pluginManager/types/pluginCommand.type.js';
+import TPluginCommand from '../../core/services/pluginManager/types/pluginCommandRegister.type.js';
 import TCommandContext from './types/commandContext.type.js';
 import ICoreContext from '../../core/services/coreContext/coreContext.interface.js';
 

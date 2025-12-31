@@ -4,7 +4,7 @@ type TPluginCommands = {
   [key: string]: {
     options: TPluginOption[],
     description: string,
-    action: (...options: any[]) => Promise<any> | Function;
+    action: (options: { [key: string]: boolean }, command: any) => Promise<any> | Function;
   }
 }
 

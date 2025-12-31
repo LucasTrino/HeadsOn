@@ -1,9 +1,10 @@
 import TPluginOption from "./pluginOption.type.js";
 
-export type TPluginCommand = {
+export type TPluginCommandRegister = {
+  name: string;
   options: TPluginOption[];
   description: string;
   action: (...options: any[]) => Promise<any> | Function;
 };
 
-export default TPluginCommand;
+export default TPluginCommandRegister;

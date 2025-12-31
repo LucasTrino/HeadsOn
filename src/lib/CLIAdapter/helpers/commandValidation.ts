@@ -1,5 +1,5 @@
 // TODO/OPTMIZE - 3.8.3
-import TPluginCommand from "../../../core/services/pluginManager/types/pluginCommand.type.js";
+import TPluginCommand from "../../../core/services/pluginManager/types/pluginCommandRegister.type.js";
 
 // TODO/QUESTION - 3.6.0
 export function isPluginCommand(obj: unknown): obj is TPluginCommand {
