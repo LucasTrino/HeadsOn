@@ -1,13 +1,14 @@
-const metadataValidationProperties = [
+import { IPluginValidationMetadatas } from "./interfaces/pluginValidationMetadatas.interface.js";
+
+const metadataValidationProperties: IPluginValidationMetadatas[] = [
   {
     name: 'name',
     required: true,
     type: 'non-empty-string',
-    errorMessage: 'plugin has to have a \'name\' property of type non-empty string'
   },
   {
     name: 'version',
-    validation: (version) => {
+    validation: (version: string) => {
       if (typeof version !== 'string')
         return false;
       const trimmed = version.trim();
@@ -17,19 +18,16 @@ const metadataValidationProperties = [
     },
     required: true,
     type: 'non-empty-string',
-    errorMessage: 'plugin has to have a \'version\' property of type non-empty string that matches a format \'0.0.0\' '
   },
   {
     name: 'description',
     required: true,
     type: 'non-empty-string',
-    errorMessage: 'plugin has to have a \'description\' property of type non-empty string'
   },
   {
     name: 'handler',
     required: true,
     type: 'non-empty-string',
-    errorMessage: 'plugin has to have a \'handler\' property of type non-empty string'
   }
 ]
 
